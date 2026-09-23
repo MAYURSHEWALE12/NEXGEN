@@ -13,12 +13,10 @@ export function SearchBar({ initialValue, onSearchChange, isLoading = false }: S
   const [query, setQuery] = useState(initialValue);
   const isFirstRender = useRef(true);
 
-  // Synchronize internal state with URL prop changes (e.g. browser back/forward or external reset)
   useEffect(() => {
     setQuery(initialValue);
   }, [initialValue]);
 
-  // Debounce the user input to prevent excessive API calls
   useEffect(() => {
     if (isFirstRender.current) {
       isFirstRender.current = false;
@@ -27,7 +25,7 @@ export function SearchBar({ initialValue, onSearchChange, isLoading = false }: S
 
     const timer = setTimeout(() => {
       onSearchChange(query);
-    }, 400);
+    }, 350);
 
     return () => clearTimeout(timer);
   }, [query, onSearchChange]);
@@ -38,29 +36,29 @@ export function SearchBar({ initialValue, onSearchChange, isLoading = false }: S
   };
 
   return (
-    <div className="relative w-full max-w-md">
-      <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
+    <div className="relative w-full max-w-sm">
+      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-zinc-400">
         <Search className="w-4 h-4" />
       </div>
       <input
         type="text"
         value={query}
         onChange={(e) => setQuery(e.target.value)}
-        placeholder="Search products by title, brand, tag..."
-        className="w-full pl-10 pr-10 py-2.5 bg-white border border-gray-200 rounded-xl text-sm placeholder-gray-400 text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm"
+        placeholder="Filter products..."
+        className="w-full pl-9 pr-8 py-1.5 bg-white border border-zinc-300 rounded-md text-sm placeholder-zinc-400 text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 transition-colors shadow-xs"
       />
-      <div className="absolute inset-y-0 right-0 pr-3 flex items-center gap-1.5">
+      <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center gap-1">
         {isLoading && (
-          <Loader2 className="w-4 h-4 text-indigo-500 animate-spin" />
+          <Loader2 className="w-3.5 h-3.5 text-zinc-400 animate-spin" />
         )}
-        {query && (
+        {query && !isLoading && (
           <button
             type="button"
             onClick={handleClear}
-            className="text-gray-400 hover:text-gray-600 p-0.5 rounded-full hover:bg-gray-100 transition-colors"
-            title="Clear search"
+            className="text-zinc-400 hover:text-zinc-600 p-0.5"
+            title="Clear"
           >
-            <X className="w-4 h-4" />
+            <X className="w-3.5 h-3.5" />
           </button>
         )}
       </div>

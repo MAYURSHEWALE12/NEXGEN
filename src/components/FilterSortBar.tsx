@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { CategoryItem } from '@/types';
-import { Filter, ArrowUpDown, RotateCcw } from 'lucide-react';
+import { ArrowDownUp, RotateCcw } from 'lucide-react';
 
 interface FilterSortBarProps {
   categories: CategoryItem[];
@@ -26,73 +26,71 @@ export function FilterSortBar({
   isFiltered,
 }: FilterSortBarProps) {
   return (
-    <div className="flex flex-wrap items-center gap-3">
+    <div className="flex flex-wrap items-center gap-2">
       {/* Category Dropdown */}
-      <div className="relative min-w-[160px] sm:min-w-[180px]">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-          <Filter className="w-3.5 h-3.5" />
-        </div>
+      <div className="relative">
         <select
           value={selectedCategory}
           onChange={(e) => onCategoryChange(e.target.value)}
-          className="w-full pl-8 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 shadow-sm cursor-pointer"
+          aria-label="Filter by category"
+          className="pl-3 pr-8 py-1.5 bg-white border border-zinc-300 rounded-md text-xs font-medium text-zinc-800 appearance-none focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 shadow-xs cursor-pointer hover:bg-zinc-50"
         >
-          <option value="all">All Categories</option>
+          <option value="all">Category: All</option>
           {categories.map((cat) => (
             <option key={cat.slug} value={cat.slug}>
               {cat.name}
             </option>
           ))}
         </select>
-        <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-gray-400">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-zinc-400">
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
           </svg>
         </div>
       </div>
 
       {/* Sort By Dropdown */}
-      <div className="relative min-w-[140px] sm:min-w-[160px]">
-        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-gray-400">
-          <ArrowUpDown className="w-3.5 h-3.5" />
-        </div>
+      <div className="relative">
         <select
           value={sortBy}
           onChange={(e) => onSortChange(e.target.value, order)}
-          className="w-full pl-8 pr-8 py-2.5 bg-white border border-gray-200 rounded-xl text-xs sm:text-sm text-gray-800 font-medium appearance-none focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 shadow-sm cursor-pointer"
+          aria-label="Sort by field"
+          className="pl-3 pr-8 py-1.5 bg-white border border-zinc-300 rounded-md text-xs font-medium text-zinc-800 appearance-none focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 shadow-xs cursor-pointer hover:bg-zinc-50"
         >
-          <option value="">Default Sorting</option>
-          <option value="title">Title</option>
-          <option value="price">Price</option>
-          <option value="rating">Rating</option>
+          <option value="">Sort: Default</option>
+          <option value="title">Sort: Title</option>
+          <option value="price">Sort: Price</option>
+          <option value="rating">Sort: Rating</option>
         </select>
-        <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-gray-400">
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="absolute inset-y-0 right-0 pr-2.5 flex items-center pointer-events-none text-zinc-400">
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
           </svg>
         </div>
       </div>
 
-      {/* Sort Direction Toggle Button */}
+      {/* Direction Toggle */}
       {sortBy && (
         <button
           type="button"
           onClick={() => onSortChange(sortBy, order === 'asc' ? 'desc' : 'asc')}
-          className="inline-flex items-center gap-1.5 px-3 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-semibold text-gray-700 hover:bg-gray-50 shadow-sm transition-colors"
+          className="inline-flex items-center gap-1 px-2.5 py-1.5 bg-white border border-zinc-300 rounded-md text-xs font-medium text-zinc-700 hover:bg-zinc-50 shadow-xs transition-colors"
           title={`Order: ${order === 'asc' ? 'Ascending' : 'Descending'}`}
         >
-          <span>{order === 'asc' ? 'Asc (↑)' : 'Desc (↓)'}</span>
+          <ArrowDownUp className="w-3 h-3 text-zinc-500" />
+          <span>{order === 'asc' ? 'Asc' : 'Desc'}</span>
         </button>
       )}
 
-      {/* Reset Filter Button */}
+      {/* Reset */}
       {isFiltered && (
         <button
           type="button"
           onClick={onReset}
-          className="inline-flex items-center gap-1.5 px-3 py-2.5 text-xs font-medium text-rose-600 hover:text-rose-700 bg-rose-50 hover:bg-rose-100 rounded-xl transition-colors border border-rose-100"
+          className="inline-flex items-center gap-1 px-2 py-1.5 text-xs font-medium text-zinc-500 hover:text-zinc-900 transition-colors"
+          title="Reset all filters"
         >
-          <RotateCcw className="w-3.5 h-3.5" />
+          <RotateCcw className="w-3 h-3" />
           <span>Reset</span>
         </button>
       )}

@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAuth } from '@/context/AuthContext';
-import { Lock, User, Loader2, AlertCircle, Sparkles, KeyRound } from 'lucide-react';
+import { Box, Loader2, AlertCircle } from 'lucide-react';
 
 export default function LoginPage() {
   const { login } = useAuth();
@@ -13,11 +13,11 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSubmitting) return; // Prevent rapid multi-clicks
+    if (isSubmitting) return;
     setError(null);
 
     if (!username.trim() || !password) {
-      setError('Please enter both username and password.');
+      setError('Please provide both username and password.');
       return;
     }
 
@@ -25,7 +25,7 @@ export default function LoginPage() {
     try {
       await login({ username: username.trim(), password });
     } catch (err: any) {
-      setError(err.message || 'Invalid username or password. Please try again.');
+      setError(err.message || 'Invalid username or password.');
     } finally {
       setIsSubmitting(false);
     }
@@ -38,116 +38,84 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-gradient-to-br from-indigo-50/50 via-gray-50 to-slate-100">
-      <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
-        {/* Brand Icon */}
-        <div className="mx-auto w-14 h-14 rounded-2xl bg-gradient-to-tr from-indigo-600 to-violet-600 flex items-center justify-center text-white shadow-xl shadow-indigo-200 mb-4">
-          <KeyRound className="w-7 h-7" />
-        </div>
-        <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-          Admin Portal Login
-        </h1>
-        <p className="mt-2 text-sm text-gray-600">
-          Sign in to access and manage the product inventory
-        </p>
-      </div>
-
-      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="bg-white py-8 px-6 sm:px-10 shadow-xl shadow-gray-200/50 rounded-3xl border border-gray-100">
-          {/* Quick Demo Credentials Pill */}
-          <div className="mb-6 p-3.5 bg-indigo-50/70 border border-indigo-100 rounded-2xl flex items-center justify-between">
-            <div className="text-xs text-indigo-900">
-              <span className="font-semibold flex items-center gap-1">
-                <Sparkles className="w-3.5 h-3.5 text-indigo-600" /> Demo Credentials:
-              </span>
-              <p className="font-mono text-[11px] text-indigo-700 mt-0.5">
-                user: <strong>emilys</strong> | pass: <strong>emilyspass</strong>
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={handleFillDemo}
-              className="text-xs font-semibold px-2.5 py-1 bg-white hover:bg-indigo-100/50 text-indigo-700 border border-indigo-200 rounded-lg shadow-xs transition-colors"
-            >
-              Fill Demo
-            </button>
+    <div className="min-h-screen flex flex-col justify-center items-center py-12 px-4 sm:px-6 lg:px-8 bg-zinc-50">
+      <div className="w-full max-w-sm space-y-6">
+        {/* Brand header */}
+        <div className="flex flex-col items-center text-center">
+          <div className="w-9 h-9 rounded-lg bg-zinc-900 flex items-center justify-center text-white mb-3 shadow-xs">
+            <Box className="w-5 h-5" />
           </div>
+          <h1 className="text-lg font-semibold text-zinc-900 tracking-tight">
+            Sign in to StoreAdmin
+          </h1>
+          <p className="text-xs text-zinc-500 mt-1">
+            Enter your credentials to access the inventory system
+          </p>
+        </div>
 
-          {/* Error Message Box */}
+        {/* Card */}
+        <div className="bg-white p-6 rounded-lg border border-zinc-200 shadow-xs">
           {error && (
-            <div className="mb-5 p-3.5 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 flex items-start gap-2.5 text-xs sm:text-sm animate-shake">
-              <AlertCircle className="w-4 h-4 text-rose-600 shrink-0 mt-0.5" />
-              <p className="font-medium leading-tight">{error}</p>
+            <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 flex items-start gap-2 text-xs">
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
+              <span>{error}</span>
             </div>
           )}
 
-          {/* Form */}
           <form className="space-y-4" onSubmit={handleSubmit}>
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
+              <label className="block text-xs font-medium text-zinc-700 mb-1">
                 Username
               </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                  <User className="w-4 h-4" />
-                </div>
-                <input
-                  type="text"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  disabled={isSubmitting}
-                  placeholder="Enter username"
-                  className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all disabled:bg-gray-50"
-                  required
-                />
-              </div>
+              <input
+                type="text"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                disabled={isSubmitting}
+                placeholder="emilys"
+                className="w-full px-3 py-1.5 bg-white border border-zinc-300 rounded-md text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 transition-colors"
+                required
+              />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
-                Password
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-gray-400">
-                  <Lock className="w-4 h-4" />
-                </div>
-                <input
-                  type="password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  disabled={isSubmitting}
-                  placeholder="Enter password"
-                  className="w-full pl-10 pr-3.5 py-2.5 bg-white border border-gray-200 rounded-xl text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all disabled:bg-gray-50"
-                  required
-                />
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-xs font-medium text-zinc-700">
+                  Password
+                </label>
+                <button
+                  type="button"
+                  onClick={handleFillDemo}
+                  className="text-[11px] text-zinc-500 hover:text-zinc-900 transition-colors underline"
+                >
+                  Use demo (emilyspass)
+                </button>
               </div>
-            </div>
-
-            <div className="pt-2">
-              <button
-                type="submit"
+              <input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
                 disabled={isSubmitting}
-                className="w-full flex justify-center items-center gap-2 py-3 px-4 border border-transparent rounded-xl shadow-md shadow-indigo-200 text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all disabled:opacity-50 disabled:pointer-events-none"
-              >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    <span>Signing in...</span>
-                  </>
-                ) : (
-                  <span>Sign in</span>
-                )}
-              </button>
+                placeholder="••••••••"
+                className="w-full px-3 py-1.5 bg-white border border-zinc-300 rounded-md text-sm text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 transition-colors"
+                required
+              />
             </div>
-          </form>
 
-          {/* Footer note */}
-          <div className="mt-6 text-center">
-            <p className="text-[11px] text-gray-400">
-              Nexgensis Frontend Assignment • Next.js & DummyJSON API
-            </p>
-          </div>
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full flex justify-center items-center gap-1.5 py-2 px-4 rounded-md text-xs font-medium text-white bg-zinc-900 hover:bg-zinc-800 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-zinc-900 transition-colors disabled:opacity-50"
+            >
+              {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              <span>Sign in</span>
+            </button>
+          </form>
         </div>
+
+        <p className="text-center text-[11px] text-zinc-400">
+          DummyJSON API Authentication Demo
+        </p>
       </div>
     </div>
   );

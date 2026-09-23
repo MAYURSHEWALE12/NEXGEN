@@ -3,7 +3,7 @@
 import React from 'react';
 import Link from 'next/link';
 import { Product } from '@/types';
-import { Star, Edit3, Trash2, Eye, AlertTriangle } from 'lucide-react';
+import { Star, Edit2, Trash2, ExternalLink } from 'lucide-react';
 
 interface ProductTableProps {
   products: Product[];
@@ -12,72 +12,72 @@ interface ProductTableProps {
 }
 
 export function ProductTable({ products, onEdit, onDelete }: ProductTableProps) {
-  const getStockBadge = (stock: number) => {
+  const getStockStatus = (stock: number) => {
     if (stock === 0) {
       return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-rose-50 text-rose-700 border border-rose-200">
-          Out of Stock
+        <span className="inline-flex items-center gap-1 text-xs font-medium text-red-700">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-600" />
+          Out of stock
         </span>
       );
     } else if (stock < 10) {
       return (
-        <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+        <span className="inline-flex items-center gap-1 text-xs font-medium text-amber-700">
+          <span className="w-1.5 h-1.5 rounded-full bg-amber-500" />
           Low ({stock})
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
-        In Stock ({stock})
+      <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-700">
+        <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+        {stock} in stock
       </span>
     );
   };
 
   return (
-    <div className="w-full overflow-hidden bg-white border border-gray-200 rounded-2xl shadow-sm">
+    <div className="w-full bg-white border border-zinc-200 rounded-lg overflow-hidden shadow-xs">
       <div className="overflow-x-auto">
-        <table className="w-full text-left text-sm text-gray-600">
-          <thead className="bg-gray-50/80 border-b border-gray-200 text-xs uppercase font-semibold text-gray-500 tracking-wider">
+        <table className="w-full text-left text-sm text-zinc-600">
+          <thead className="bg-zinc-50 border-b border-zinc-200 text-xs font-medium text-zinc-500 uppercase tracking-wider">
             <tr>
-              <th scope="col" className="px-5 py-3.5">Product</th>
-              <th scope="col" className="px-4 py-3.5">Category</th>
-              <th scope="col" className="px-4 py-3.5">Price</th>
-              <th scope="col" className="px-4 py-3.5">Rating</th>
-              <th scope="col" className="px-4 py-3.5">Stock</th>
-              <th scope="col" className="px-5 py-3.5 text-right">Actions</th>
+              <th scope="col" className="px-4 py-3 font-semibold text-zinc-900">Product</th>
+              <th scope="col" className="px-4 py-3 font-semibold text-zinc-900">Category</th>
+              <th scope="col" className="px-4 py-3 font-semibold text-zinc-900 text-right">Price</th>
+              <th scope="col" className="px-4 py-3 font-semibold text-zinc-900 text-center">Rating</th>
+              <th scope="col" className="px-4 py-3 font-semibold text-zinc-900">Inventory</th>
+              <th scope="col" className="px-4 py-3 font-semibold text-zinc-900 text-right">Actions</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-100">
+          <tbody className="divide-y divide-zinc-100">
             {products.map((product) => (
               <tr
                 key={product.id}
-                className="hover:bg-indigo-50/30 transition-colors group"
+                className="hover:bg-zinc-50/80 transition-colors group"
               >
-                {/* Product Image & Title */}
-                <td className="px-5 py-4">
-                  <div className="flex items-center gap-3.5">
-                    <div className="w-12 h-12 rounded-xl bg-gray-100 border border-gray-200 overflow-hidden shrink-0 flex items-center justify-center p-1 relative">
+                {/* Product Info */}
+                <td className="px-4 py-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-md bg-zinc-100 border border-zinc-200 p-0.5 shrink-0 flex items-center justify-center overflow-hidden">
                       <img
                         src={product.thumbnail}
                         alt={product.title}
-                        className="w-full h-full object-contain mix-blend-multiply group-hover:scale-105 transition-transform"
+                        className="w-full h-full object-contain mix-blend-multiply"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =
-                            'https://placehold.co/100x100?text=No+Image';
+                            'https://placehold.co/80x80?text=No+Img';
                         }}
                       />
-                      {product.isLocal && (
-                        <span className="absolute top-0.5 right-0.5 w-2 h-2 rounded-full bg-indigo-500 ring-2 ring-white" title="Locally added/modified" />
-                      )}
                     </div>
-                    <div className="max-w-xs">
+                    <div className="min-w-0 max-w-sm">
                       <Link
                         href={`/products/${product.id}`}
-                        className="font-semibold text-gray-900 hover:text-indigo-600 transition-colors line-clamp-1 text-sm block"
+                        className="font-medium text-zinc-900 hover:text-blue-600 transition-colors truncate block text-sm"
                       >
                         {product.title}
                       </Link>
-                      <p className="text-xs text-gray-400 capitalize">
+                      <p className="text-xs text-zinc-400 capitalize">
                         {product.brand || 'Generic'}
                       </p>
                     </div>
@@ -85,66 +85,60 @@ export function ProductTable({ products, onEdit, onDelete }: ProductTableProps) 
                 </td>
 
                 {/* Category */}
-                <td className="px-4 py-4">
-                  <span className="inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-medium bg-gray-100 text-gray-700 capitalize">
+                <td className="px-4 py-3">
+                  <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-zinc-100 text-zinc-700 capitalize border border-zinc-200/60">
                     {product.category}
                   </span>
                 </td>
 
                 {/* Price */}
-                <td className="px-4 py-4">
-                  <div>
-                    <span className="font-bold text-gray-900 text-sm">
-                      ${product.price.toFixed(2)}
+                <td className="px-4 py-3 text-right font-mono text-zinc-900 font-medium">
+                  ${product.price.toFixed(2)}
+                  {product.discountPercentage && product.discountPercentage > 0 && (
+                    <span className="ml-1 text-[11px] text-zinc-400 font-normal">
+                      (-{Math.round(product.discountPercentage)}%)
                     </span>
-                    {product.discountPercentage && product.discountPercentage > 0 && (
-                      <span className="ml-1.5 text-[11px] font-semibold text-emerald-600">
-                        {Math.round(product.discountPercentage)}% off
-                      </span>
-                    )}
-                  </div>
+                  )}
                 </td>
 
                 {/* Rating */}
-                <td className="px-4 py-4">
-                  <div className="flex items-center gap-1">
-                    <Star className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    <span className="text-xs font-semibold text-gray-900">
-                      {product.rating ? product.rating.toFixed(1) : 'N/A'}
-                    </span>
+                <td className="px-4 py-3 text-center">
+                  <div className="inline-flex items-center gap-1 text-xs font-medium text-zinc-700">
+                    <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                    <span>{product.rating ? product.rating.toFixed(1) : '-'}</span>
                   </div>
                 </td>
 
                 {/* Stock Status */}
-                <td className="px-4 py-4">
-                  {getStockBadge(product.stock)}
+                <td className="px-4 py-3">
+                  {getStockStatus(product.stock)}
                 </td>
 
                 {/* Actions */}
-                <td className="px-5 py-4 text-right">
-                  <div className="inline-flex items-center gap-1.5">
+                <td className="px-4 py-3 text-right">
+                  <div className="inline-flex items-center gap-1 opacity-80 group-hover:opacity-100 transition-opacity">
                     <Link
                       href={`/products/${product.id}`}
-                      className="p-1.5 text-gray-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                      className="p-1.5 text-zinc-400 hover:text-zinc-800 hover:bg-zinc-100 rounded transition-colors"
                       title="View Details"
                     >
-                      <Eye className="w-4 h-4" />
+                      <ExternalLink className="w-3.5 h-3.5" />
                     </Link>
                     <button
                       type="button"
                       onClick={() => onEdit(product)}
-                      className="p-1.5 text-gray-400 hover:text-amber-600 hover:bg-amber-50 rounded-lg transition-colors"
+                      className="p-1.5 text-zinc-400 hover:text-zinc-800 hover:bg-zinc-100 rounded transition-colors"
                       title="Edit Product"
                     >
-                      <Edit3 className="w-4 h-4" />
+                      <Edit2 className="w-3.5 h-3.5" />
                     </button>
                     <button
                       type="button"
                       onClick={() => onDelete(product)}
-                      className="p-1.5 text-gray-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors"
+                      className="p-1.5 text-zinc-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
                       title="Delete Product"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash2 className="w-3.5 h-3.5" />
                     </button>
                   </div>
                 </td>

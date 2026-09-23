@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Product, ProductFormData, CategoryItem } from '@/types';
-import { X, Loader2, Plus, Sparkles, Check } from 'lucide-react';
+import { X, Loader2 } from 'lucide-react';
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -66,13 +66,11 @@ export function ProductModal({
     const newErrors: Record<string, string> = {};
 
     if (!formData.title.trim()) {
-      newErrors.title = 'Product title is required';
-    } else if (formData.title.trim().length < 3) {
-      newErrors.title = 'Title must be at least 3 characters';
+      newErrors.title = 'Title is required';
     }
 
     if (!formData.category) {
-      newErrors.category = 'Please select a category';
+      newErrors.category = 'Category is required';
     }
 
     if (formData.price === undefined || formData.price === null || Number(formData.price) <= 0) {
@@ -80,7 +78,7 @@ export function ProductModal({
     }
 
     if (formData.stock === undefined || formData.stock === null || Number(formData.stock) < 0) {
-      newErrors.stock = 'Stock cannot be negative';
+      newErrors.stock = 'Stock must be non-negative';
     }
 
     if (!formData.description.trim()) {
@@ -93,7 +91,7 @@ export function ProductModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (isSubmitting) return; // Prevent double submission
+    if (isSubmitting) return;
     if (!validate()) return;
 
     try {
@@ -104,68 +102,62 @@ export function ProductModal({
       });
       onClose();
     } catch (err) {
-      // Error is handled via Toast
+      // error handled via toast
     }
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-lg w-full p-6 shadow-2xl border border-gray-100 relative animate-in fade-in zoom-in-95 duration-200">
+    <div className="fixed inset-0 z-50 overflow-y-auto bg-zinc-900/40 backdrop-blur-xs flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg max-w-md w-full p-5 shadow-xl border border-zinc-200 relative animate-in fade-in zoom-in-98 duration-150">
         {/* Header */}
-        <div className="flex items-center justify-between pb-4 border-b border-gray-100">
+        <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
           <div>
-            <h2 className="text-lg font-bold text-gray-900">
-              {isEditing ? 'Edit Product' : 'Add New Product'}
+            <h2 className="text-sm font-semibold text-zinc-900">
+              {isEditing ? 'Edit product' : 'Add product'}
             </h2>
-            <p className="text-xs text-gray-500 mt-0.5">
-              {isEditing ? 'Update product details in the catalog' : 'Fill in the information to list a new item'}
+            <p className="text-xs text-zinc-500 mt-0.5">
+              {isEditing ? 'Modify catalog product values' : 'Create a new catalog item'}
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
             disabled={isSubmitting}
-            className="p-1.5 text-gray-400 hover:text-gray-700 hover:bg-gray-100 rounded-xl transition-colors"
+            className="p-1 text-zinc-400 hover:text-zinc-600 rounded transition-colors"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="mt-4 space-y-4">
-          {/* Title */}
+        <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">
-              Title <span className="text-rose-500">*</span>
+            <label className="block text-xs font-medium text-zinc-700 mb-1">
+              Title
             </label>
             <input
               type="text"
               value={formData.title}
               onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="e.g. Wireless Noise-Cancelling Headphones"
-              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
+              placeholder="e.g. Mechanical Keyboard"
+              className={`w-full px-3 py-1.5 rounded-md border text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 transition-colors ${
                 errors.title
-                  ? 'border-rose-300 focus:ring-rose-200 focus:border-rose-500 bg-rose-50/20'
-                  : 'border-gray-200 focus:ring-indigo-500/20 focus:border-indigo-500'
+                  ? 'border-red-300 focus:ring-red-500 focus:border-red-500 bg-red-50/20'
+                  : 'border-zinc-300 focus:ring-zinc-900 focus:border-zinc-900'
               }`}
             />
-            {errors.title && <p className="text-xs text-rose-600 mt-1">{errors.title}</p>}
+            {errors.title && <p className="text-[11px] text-red-600 mt-1">{errors.title}</p>}
           </div>
 
-          {/* Category & Brand */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
-                Category <span className="text-rose-500">*</span>
+              <label className="block text-xs font-medium text-zinc-700 mb-1">
+                Category
               </label>
               <select
                 value={formData.category}
                 onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-gray-900 focus:outline-none focus:ring-2 transition-all appearance-none bg-white ${
-                  errors.category
-                    ? 'border-rose-300 focus:ring-rose-200 focus:border-rose-500'
-                    : 'border-gray-200 focus:ring-indigo-500/20 focus:border-indigo-500'
-                }`}
+                className="w-full px-2.5 py-1.5 rounded-md border border-zinc-300 text-xs text-zinc-900 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 bg-white"
               >
                 <option value="">Select category</option>
                 {categories.map((cat) => (
@@ -174,26 +166,25 @@ export function ProductModal({
                   </option>
                 ))}
               </select>
-              {errors.category && <p className="text-xs text-rose-600 mt-1">{errors.category}</p>}
+              {errors.category && <p className="text-[11px] text-red-600 mt-1">{errors.category}</p>}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">Brand</label>
+              <label className="block text-xs font-medium text-zinc-700 mb-1">Brand</label>
               <input
                 type="text"
                 value={formData.brand}
                 onChange={(e) => setFormData({ ...formData, brand: e.target.value })}
-                placeholder="e.g. Sony, Apple"
-                className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                placeholder="e.g. Logitech"
+                className="w-full px-3 py-1.5 rounded-md border border-zinc-300 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900"
               />
             </div>
           </div>
 
-          {/* Price & Stock */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
-                Price ($) <span className="text-rose-500">*</span>
+              <label className="block text-xs font-medium text-zinc-700 mb-1">
+                Price ($)
               </label>
               <input
                 type="number"
@@ -201,93 +192,70 @@ export function ProductModal({
                 min="0.01"
                 value={formData.price || ''}
                 onChange={(e) => setFormData({ ...formData, price: parseFloat(e.target.value) || 0 })}
-                placeholder="29.99"
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
-                  errors.price
-                    ? 'border-rose-300 focus:ring-rose-200 focus:border-rose-500'
-                    : 'border-gray-200 focus:ring-indigo-500/20 focus:border-indigo-500'
-                }`}
+                placeholder="49.99"
+                className="w-full px-3 py-1.5 rounded-md border border-zinc-300 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 font-mono"
               />
-              {errors.price && <p className="text-xs text-rose-600 mt-1">{errors.price}</p>}
+              {errors.price && <p className="text-[11px] text-red-600 mt-1">{errors.price}</p>}
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-gray-700 mb-1">
-                Stock Quantity <span className="text-rose-500">*</span>
+              <label className="block text-xs font-medium text-zinc-700 mb-1">
+                Stock
               </label>
               <input
                 type="number"
                 min="0"
                 value={formData.stock !== undefined ? formData.stock : ''}
                 onChange={(e) => setFormData({ ...formData, stock: parseInt(e.target.value, 10) || 0 })}
-                placeholder="100"
-                className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
-                  errors.stock
-                    ? 'border-rose-300 focus:ring-rose-200 focus:border-rose-500'
-                    : 'border-gray-200 focus:ring-indigo-500/20 focus:border-indigo-500'
-                }`}
+                placeholder="50"
+                className="w-full px-3 py-1.5 rounded-md border border-zinc-300 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 font-mono"
               />
-              {errors.stock && <p className="text-xs text-rose-600 mt-1">{errors.stock}</p>}
+              {errors.stock && <p className="text-[11px] text-red-600 mt-1">{errors.stock}</p>}
             </div>
           </div>
 
-          {/* Image URL */}
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">Thumbnail Image URL</label>
+            <label className="block text-xs font-medium text-zinc-700 mb-1">Image URL</label>
             <input
               type="url"
               value={formData.thumbnail}
               onChange={(e) => setFormData({ ...formData, thumbnail: e.target.value })}
-              placeholder="https://example.com/product.jpg (optional)"
-              className="w-full px-3.5 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+              placeholder="https://..."
+              className="w-full px-3 py-1.5 rounded-md border border-zinc-300 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900"
             />
           </div>
 
-          {/* Description */}
           <div>
-            <label className="block text-xs font-semibold text-gray-700 mb-1">
-              Description <span className="text-rose-500">*</span>
+            <label className="block text-xs font-medium text-zinc-700 mb-1">
+              Description
             </label>
             <textarea
               rows={3}
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              placeholder="Describe product highlights and key features..."
-              className={`w-full px-3.5 py-2.5 rounded-xl border text-sm text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 transition-all ${
-                errors.description
-                  ? 'border-rose-300 focus:ring-rose-200 focus:border-rose-500'
-                  : 'border-gray-200 focus:ring-indigo-500/20 focus:border-indigo-500'
-              }`}
+              placeholder="Product summary and key specifications..."
+              className="w-full px-3 py-1.5 rounded-md border border-zinc-300 text-xs text-zinc-900 placeholder-zinc-400 focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900"
             />
-            {errors.description && <p className="text-xs text-rose-600 mt-1">{errors.description}</p>}
+            {errors.description && <p className="text-[11px] text-red-600 mt-1">{errors.description}</p>}
           </div>
 
-          {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-3 pt-3 border-t border-gray-100">
+          {/* Footer */}
+          <div className="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100">
             <button
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="px-4 py-2.5 rounded-xl border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
+              className="px-3 py-1.5 rounded-md border border-zinc-300 text-xs font-medium text-zinc-700 hover:bg-zinc-50 transition-colors"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-semibold shadow-md shadow-indigo-200 transition-all disabled:opacity-50 disabled:pointer-events-none"
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-md bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium transition-colors disabled:opacity-50"
             >
-              {isSubmitting ? (
-                <>
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  <span>Saving...</span>
-                </>
-              ) : (
-                <>
-                  <Check className="w-4 h-4" />
-                  <span>{isEditing ? 'Save Changes' : 'Create Product'}</span>
-                </>
-              )}
+              {isSubmitting && <Loader2 className="w-3.5 h-3.5 animate-spin" />}
+              <span>{isEditing ? 'Save changes' : 'Create product'}</span>
             </button>
           </div>
         </form>

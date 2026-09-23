@@ -16,17 +16,13 @@ import { DeleteConfirmModal } from '@/components/DeleteConfirmModal';
 import { TableSkeleton, CardsSkeleton } from '@/components/LoadingState';
 import { EmptyState } from '@/components/EmptyState';
 import { ErrorState } from '@/components/ErrorState';
-import { Plus, LayoutGrid, Table as TableIcon } from 'lucide-react';
+import { Plus } from 'lucide-react';
 
 function ProductsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // Local mutation overlay context
   const {
-    locallyAdded,
-    locallyUpdated,
-    locallyDeletedIds,
     handleAddProduct,
     handleUpdateProduct,
     handleDeleteProduct,
@@ -34,7 +30,6 @@ function ProductsContent() {
     isSubmitting: isMutationSubmitting,
   } = useProductsContext();
 
-  // --- URL State Parsing & Validation ---
   const rawPage = parseInt(searchParams.get('page') || '1', 10);
   const page = isNaN(rawPage) || rawPage < 1 ? 1 : rawPage;
 
@@ -46,27 +41,20 @@ function ProductsContent() {
   const sortBy = searchParams.get('sortBy') || '';
   const order = (searchParams.get('order') as 'asc' | 'desc') || 'asc';
 
-  // --- State Variables ---
   const [products, setProducts] = useState<Product[]>([]);
   const [total, setTotal] = useState<number>(0);
   const [categories, setCategories] = useState<CategoryItem[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Responsive View Toggle (Desktop Table vs Mobile Cards)
-  const [viewMode, setViewMode] = useState<'table' | 'cards'>('table');
-
-  // Modals state
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const [deletingProduct, setDeletingProduct] = useState<Product | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState<boolean>(false);
 
-  // Active request tracking to avoid race conditions
   const activeAbortControllerRef = useRef<AbortController | null>(null);
   const requestCounterRef = useRef<number>(0);
 
-  // --- Helper to update URL params cleanly ---
   const updateUrlParams = useCallback(
     (updates: Record<string, string | number | null>) => {
       const params = new URLSearchParams(searchParams.toString());
@@ -84,7 +72,6 @@ function ProductsContent() {
     [router, searchParams]
   );
 
-  // --- Load Categories Once ---
   useEffect(() => {
     productService
       .getCategories()
@@ -92,9 +79,7 @@ function ProductsContent() {
       .catch((err) => console.error('Failed to fetch categories', err));
   }, []);
 
-  // --- Fetch Products with Debounce / Race Condition Cancellation ---
   const fetchProducts = useCallback(async () => {
-    // Cancel any previous pending request
     if (activeAbortControllerRef.current) {
       activeAbortControllerRef.current.abort();
     }
@@ -109,12 +94,10 @@ function ProductsContent() {
     const skip = (page - 1) * limit;
 
     try {
-      // Handle the DummyJSON architectural limitation: Search + Category simultaneous query
       if (search && search.trim().length > 0 && category && category !== 'all') {
-        // Fetch matching search results from API, then filter by category
         const response = await productService.getProducts({
           search,
-          limit: 100, // Fetch broader set for accurate client category filter
+          limit: 100,
           skip: 0,
           sortBy: sortBy || undefined,
           order,
@@ -123,23 +106,19 @@ function ProductsContent() {
 
         if (currentRequestId !== requestCounterRef.current) return;
 
-        // Apply category filter
         const categoryFiltered = response.products.filter(
           (p) => p.category.toLowerCase() === category.toLowerCase()
         );
 
-        // Apply local additions/edits/deletions
         const { products: modified, total: adjustedTotal } = applyLocalModifications(
           categoryFiltered,
           categoryFiltered.length
         );
 
-        // Paginate slice
         const paginated = modified.slice(skip, skip + limit);
         setProducts(paginated);
         setTotal(adjustedTotal);
       } else {
-        // Standard API query (Search OR Category OR General pagination)
         const response = await productService.getProducts({
           limit,
           skip,
@@ -152,7 +131,6 @@ function ProductsContent() {
 
         if (currentRequestId !== requestCounterRef.current) return;
 
-        // Apply local additions/updates/deletions overlay
         const { products: modified, total: adjustedTotal } = applyLocalModifications(
           response.products,
           response.total
@@ -163,7 +141,7 @@ function ProductsContent() {
       }
     } catch (err: any) {
       if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') {
-        return; // Ignore aborted requests
+        return;
       }
       if (currentRequestId === requestCounterRef.current) {
         setError(err.message || 'Failed to fetch products. Please try again.');
@@ -184,27 +162,16 @@ function ProductsContent() {
     };
   }, [fetchProducts]);
 
-  // --- Handlers for URL State Updates ---
   const handleSearchChange = (query: string) => {
-    updateUrlParams({
-      q: query || null,
-      page: 1, // Reset to page 1 on search change
-    });
+    updateUrlParams({ q: query || null, page: 1 });
   };
 
   const handleCategoryChange = (newCat: string) => {
-    updateUrlParams({
-      category: newCat === 'all' ? null : newCat,
-      page: 1, // Reset to page 1 on filter change
-    });
+    updateUrlParams({ category: newCat === 'all' ? null : newCat, page: 1 });
   };
 
   const handleSortChange = (newSortBy: string, newOrder: 'asc' | 'desc') => {
-    updateUrlParams({
-      sortBy: newSortBy || null,
-      order: newSortBy ? newOrder : null,
-      page: 1,
-    });
+    updateUrlParams({ sortBy: newSortBy || null, order: newSortBy ? newOrder : null, page: 1 });
   };
 
   const handlePageChange = (newPage: number) => {
@@ -216,16 +183,9 @@ function ProductsContent() {
   };
 
   const handleResetFilters = () => {
-    updateUrlParams({
-      q: null,
-      category: null,
-      sortBy: null,
-      order: null,
-      page: 1,
-    });
+    updateUrlParams({ q: null, category: null, sortBy: null, order: null, page: 1 });
   };
 
-  // --- CRUD Modal Handlers ---
   const openAddModal = () => {
     setEditingProduct(null);
     setIsModalOpen(true);
@@ -261,64 +221,35 @@ function ProductsContent() {
   const isFiltered = !!search || category !== 'all' || !!sortBy;
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-zinc-50/60 flex flex-col font-sans">
       <Navbar />
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 flex-1 w-full space-y-6">
-        {/* Top Header Row */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 flex-1 w-full space-y-4">
+        {/* Header bar */}
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pb-2 border-b border-zinc-200">
           <div>
-            <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-              Products Inventory
+            <h1 className="text-xl font-bold text-zinc-900 tracking-tight">
+              Products
             </h1>
-            <p className="text-xs sm:text-sm text-gray-500 mt-1">
-              Manage, search, sort, and organize catalog items seamlessly
+            <p className="text-xs text-zinc-500 mt-0.5">
+              Manage inventory, pricing, and catalog details
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
-            {/* View Mode Toggle for Tablet/Desktop */}
-            <div className="hidden sm:flex items-center p-1 bg-white border border-gray-200 rounded-xl shadow-xs">
-              <button
-                type="button"
-                onClick={() => setViewMode('table')}
-                className={`p-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                  viewMode === 'table'
-                    ? 'bg-indigo-50 text-indigo-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-                title="Table View"
-              >
-                <TableIcon className="w-4 h-4" />
-              </button>
-              <button
-                type="button"
-                onClick={() => setViewMode('cards')}
-                className={`p-1.5 rounded-lg text-xs font-semibold transition-colors ${
-                  viewMode === 'cards'
-                    ? 'bg-indigo-50 text-indigo-600'
-                    : 'text-gray-500 hover:text-gray-700'
-                }`}
-                title="Cards View"
-              >
-                <LayoutGrid className="w-4 h-4" />
-              </button>
-            </div>
-
-            {/* Add Product Button */}
+          <div>
             <button
               type="button"
               onClick={openAddModal}
-              className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white text-xs sm:text-sm font-semibold shadow-md shadow-indigo-200 transition-all hover:scale-[1.02] active:scale-[0.98]"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-zinc-900 hover:bg-zinc-800 text-white text-xs font-medium shadow-xs transition-colors"
             >
-              <Plus className="w-4 h-4" />
-              <span>Add Product</span>
+              <Plus className="w-3.5 h-3.5" />
+              <span>Add product</span>
             </button>
           </div>
         </div>
 
-        {/* Filter & Search Bar Row */}
-        <div className="bg-white p-4 rounded-2xl border border-gray-200 shadow-sm flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4">
+        {/* Filter / Search toolbar */}
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
           <SearchBar
             initialValue={search}
             onSearchChange={handleSearchChange}
@@ -336,7 +267,7 @@ function ProductsContent() {
           />
         </div>
 
-        {/* Content Area: Loading, Error, Empty, or Products List */}
+        {/* Main Content Area */}
         {isLoading ? (
           <div>
             <div className="hidden md:block">
@@ -350,18 +281,18 @@ function ProductsContent() {
           <ErrorState message={error} onRetry={fetchProducts} />
         ) : products.length === 0 ? (
           <EmptyState
-            title="No matching products"
+            title="No products found"
             message={
               isFiltered
-                ? 'Try adjusting your search query, clearing filters, or resetting category.'
-                : 'No products are currently available in the catalog.'
+                ? 'No items matched your current filter or search criteria.'
+                : 'No products are available in this catalog.'
             }
             onReset={isFiltered ? handleResetFilters : undefined}
           />
         ) : (
-          <div className="space-y-4">
-            {/* Desktop Table (or selected viewMode) */}
-            <div className={viewMode === 'table' ? 'hidden md:block' : 'hidden'}>
+          <div className="space-y-3">
+            {/* Desktop Table */}
+            <div className="hidden md:block">
               <ProductTable
                 products={products}
                 onEdit={openEditModal}
@@ -369,8 +300,8 @@ function ProductsContent() {
               />
             </div>
 
-            {/* Mobile Card List (always on mobile or if cards selected) */}
-            <div className={viewMode === 'cards' ? 'block' : 'block md:hidden'}>
+            {/* Mobile Cards */}
+            <div className="block md:hidden">
               <ProductCardList
                 products={products}
                 onEdit={openEditModal}
@@ -378,7 +309,7 @@ function ProductsContent() {
               />
             </div>
 
-            {/* Custom Pagination Component */}
+            {/* Custom Pagination */}
             <Pagination
               currentPage={page}
               totalItems={total}
@@ -391,7 +322,7 @@ function ProductsContent() {
         )}
       </main>
 
-      {/* Add / Edit Product Modal */}
+      {/* Modals */}
       <ProductModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
@@ -401,7 +332,6 @@ function ProductsContent() {
         isSubmitting={isMutationSubmitting}
       />
 
-      {/* Delete Confirmation Modal */}
       <DeleteConfirmModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}
@@ -417,8 +347,8 @@ export default function ProductsPage() {
   return (
     <Suspense
       fallback={
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
-          <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin" />
+        <div className="min-h-screen flex items-center justify-center bg-zinc-50">
+          <div className="w-6 h-6 border-2 border-zinc-900 border-t-transparent rounded-full animate-spin" />
         </div>
       }
     >

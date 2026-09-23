@@ -3,60 +3,52 @@
 import React from 'react';
 import Link from 'next/link';
 import { useAuth } from '@/context/AuthContext';
-import { LayoutDashboard, LogOut, User, Sparkles } from 'lucide-react';
+import { LogOut, Box, ChevronRight } from 'lucide-react';
 
 export function Navbar() {
   const { user, logout } = useAuth();
 
   return (
-    <header className="sticky top-0 z-40 w-full border-b border-gray-200 bg-white/80 backdrop-blur-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-        {/* Brand */}
-        <Link href="/products" className="flex items-center gap-2.5 group">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center text-white shadow-md shadow-indigo-200 group-hover:scale-105 transition-transform">
-            <LayoutDashboard className="w-5 h-5" />
-          </div>
-          <div>
-            <div className="flex items-center gap-1.5 font-bold text-gray-900 text-lg leading-none">
-              Nexgen Admin
-              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-50 text-indigo-700 border border-indigo-100">
-                <Sparkles className="w-2.5 h-2.5 mr-0.5" /> v1.0
-              </span>
+    <header className="sticky top-0 z-40 w-full border-b border-zinc-200 bg-white">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between">
+        {/* Left: Brand & Breadcrumb */}
+        <div className="flex items-center gap-3">
+          <Link href="/products" className="flex items-center gap-2 font-semibold text-zinc-900 text-sm tracking-tight hover:opacity-80 transition-opacity">
+            <div className="w-7 h-7 rounded-md bg-zinc-900 flex items-center justify-center text-white">
+              <Box className="w-4 h-4" />
             </div>
-            <p className="text-xs text-gray-500 font-medium">Product Inventory System</p>
-          </div>
-        </Link>
+            <span>StoreAdmin</span>
+          </Link>
+          <span className="text-zinc-300">/</span>
+          <span className="text-xs font-medium text-zinc-600">Products</span>
+        </div>
 
-        {/* User Info & Logout */}
+        {/* Right: User details & Logout */}
         {user && (
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="flex items-center gap-3 pl-3 pr-2 py-1.5 rounded-full bg-gray-50 border border-gray-200/80">
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 py-1 px-2 rounded-md hover:bg-zinc-50 border border-transparent hover:border-zinc-200 transition-colors">
               {user.image ? (
                 <img
                   src={user.image}
                   alt={user.username}
-                  className="w-8 h-8 rounded-full border border-gray-200 object-cover bg-white"
+                  className="w-6 h-6 rounded-full border border-zinc-200 object-cover bg-zinc-100"
                 />
               ) : (
-                <div className="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-bold text-xs">
-                  <User className="w-4 h-4" />
+                <div className="w-6 h-6 rounded-full bg-zinc-800 text-white flex items-center justify-center text-xs font-medium">
+                  {user.firstName?.[0] || 'U'}
                 </div>
               )}
-              <div className="hidden sm:block text-left pr-2">
-                <p className="text-xs font-semibold text-gray-900 leading-tight">
-                  {user.firstName} {user.lastName}
-                </p>
-                <p className="text-[11px] text-gray-500 leading-tight">@{user.username}</p>
-              </div>
+              <span className="text-xs font-medium text-zinc-800 hidden sm:inline">
+                {user.firstName} {user.lastName}
+              </span>
             </div>
 
             <button
               onClick={logout}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-gray-700 hover:text-rose-600 bg-white hover:bg-rose-50 border border-gray-200 hover:border-rose-200 rounded-lg transition-all shadow-sm"
-              title="Log out of session"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 rounded-md transition-colors border border-zinc-200"
             >
-              <LogOut className="w-4 h-4" />
-              <span className="hidden sm:inline">Logout</span>
+              <LogOut className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">Sign out</span>
             </button>
           </div>
         )}

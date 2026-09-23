@@ -1,7 +1,7 @@
 'use client';
 
 import React from 'react';
-import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface PaginationProps {
   currentPage: number;
@@ -26,7 +26,6 @@ export function Pagination({
   const startItem = totalItems === 0 ? 0 : (safeCurrentPage - 1) * pageSize + 1;
   const endItem = Math.min(safeCurrentPage * pageSize, totalItems);
 
-  // Generate pagination range with smart ellipsis
   const getPageNumbers = (): (number | string)[] => {
     const pages: (number | string)[] = [];
     const maxVisiblePages = 5;
@@ -64,22 +63,22 @@ export function Pagination({
   const pageNumbers = getPageNumbers();
 
   return (
-    <div className="flex flex-col sm:flex-row items-center justify-between gap-4 py-4 px-2 border-t border-gray-200">
-      {/* Left: Showing Range Text & Page Size Selector */}
-      <div className="flex flex-wrap items-center gap-4 text-xs sm:text-sm text-gray-600">
-        <p className="font-medium">
-          Showing <span className="font-semibold text-gray-900">{startItem}</span>–
-          <span className="font-semibold text-gray-900">{endItem}</span> of{' '}
-          <span className="font-semibold text-gray-900">{totalItems}</span> products
-        </p>
+    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 py-3 px-1 text-xs text-zinc-600">
+      {/* Left info */}
+      <div className="flex items-center gap-3">
+        <span>
+          Showing <strong className="font-semibold text-zinc-900">{startItem}–{endItem}</strong> of{' '}
+          <strong className="font-semibold text-zinc-900">{totalItems}</strong>
+        </span>
 
-        <div className="flex items-center gap-1.5 pl-2 border-l border-gray-200">
-          <span className="text-gray-500 text-xs">Per page:</span>
+        <div className="flex items-center gap-1.5 pl-3 border-l border-zinc-200">
+          <span className="text-zinc-500">Rows:</span>
           <select
             value={pageSize}
             onChange={(e) => onPageSizeChange(Number(e.target.value))}
             disabled={isLoading}
-            className="px-2 py-1 bg-white border border-gray-200 rounded-lg text-xs font-semibold text-gray-800 focus:outline-none focus:ring-1 focus:ring-indigo-500 shadow-sm cursor-pointer disabled:opacity-50"
+            aria-label="Select rows per page"
+            className="px-1.5 py-0.5 bg-white border border-zinc-300 rounded text-xs font-medium text-zinc-800 focus:outline-none focus:ring-1 focus:ring-zinc-900 cursor-pointer disabled:opacity-50"
           >
             <option value={10}>10</option>
             <option value={20}>20</option>
@@ -88,37 +87,24 @@ export function Pagination({
         </div>
       </div>
 
-      {/* Right: Page navigation buttons */}
+      {/* Right controls */}
       <div className="flex items-center gap-1">
-        {/* First Page */}
-        <button
-          type="button"
-          onClick={() => onPageChange(1)}
-          disabled={safeCurrentPage === 1 || isLoading}
-          className="p-1.5 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-sm"
-          title="First Page"
-        >
-          <ChevronsLeft className="w-4 h-4" />
-        </button>
-
-        {/* Previous Page */}
         <button
           type="button"
           onClick={() => onPageChange(safeCurrentPage - 1)}
           disabled={safeCurrentPage === 1 || isLoading}
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-sm"
+          className="inline-flex items-center gap-1 px-2 py-1 rounded border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-xs"
         >
-          <ChevronLeft className="w-4 h-4" />
-          <span className="hidden sm:inline">Prev</span>
+          <ChevronLeft className="w-3.5 h-3.5" />
+          <span>Previous</span>
         </button>
 
-        {/* Numbered Page Buttons */}
         <div className="flex items-center gap-1 mx-1">
           {pageNumbers.map((page, index) => {
             if (page === '...') {
               return (
-                <span key={`ellipsis-${index}`} className="px-2 py-1 text-xs text-gray-400 select-none">
-                  ...
+                <span key={`ellipsis-${index}`} className="px-1.5 py-0.5 text-zinc-400 select-none">
+                  …
                 </span>
               );
             }
@@ -130,10 +116,10 @@ export function Pagination({
                 type="button"
                 onClick={() => onPageChange(page as number)}
                 disabled={isLoading}
-                className={`min-w-[32px] h-8 px-2 rounded-lg text-xs font-semibold transition-all ${
+                className={`min-w-[26px] h-6 px-1.5 rounded text-xs font-medium transition-colors ${
                   isCurrent
-                    ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-200'
-                    : 'bg-white border border-gray-200 text-gray-700 hover:bg-gray-50'
+                    ? 'bg-zinc-900 text-white'
+                    : 'bg-white border border-zinc-300 text-zinc-700 hover:bg-zinc-50'
                 } disabled:opacity-50`}
               >
                 {page}
@@ -142,26 +128,14 @@ export function Pagination({
           })}
         </div>
 
-        {/* Next Page */}
         <button
           type="button"
           onClick={() => onPageChange(safeCurrentPage + 1)}
           disabled={safeCurrentPage === totalPages || isLoading}
-          className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg border border-gray-200 bg-white text-xs font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-sm"
+          className="inline-flex items-center gap-1 px-2 py-1 rounded border border-zinc-300 bg-white text-zinc-700 hover:bg-zinc-50 disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-xs"
         >
-          <span className="hidden sm:inline">Next</span>
-          <ChevronRight className="w-4 h-4" />
-        </button>
-
-        {/* Last Page */}
-        <button
-          type="button"
-          onClick={() => onPageChange(totalPages)}
-          disabled={safeCurrentPage === totalPages || isLoading}
-          className="p-1.5 rounded-lg border border-gray-200 bg-white text-gray-600 hover:bg-gray-50 hover:text-gray-900 disabled:opacity-40 disabled:pointer-events-none transition-colors shadow-sm"
-          title="Last Page"
-        >
-          <ChevronsRight className="w-4 h-4" />
+          <span>Next</span>
+          <ChevronRight className="w-3.5 h-3.5" />
         </button>
       </div>
     </div>
