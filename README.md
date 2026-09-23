@@ -1,14 +1,6 @@
 # Product Admin Dashboard
 
-A high-performance Product Admin Dashboard built for the **Nexgensis Technologies Frontend Developer Assignment** using **Next.js (App Router)**, **React**, **Tailwind CSS**, and **Axios**, integrated with the **DummyJSON API**.
-
----
-
-## 🚀 Live Demo & Submission Details
-- **GitHub Repository**: [https://github.com/MAYURSHEWALE12/NEXGEN](https://github.com/MAYURSHEWALE12/NEXGEN)
-- **Submission Form**: [Google Form](https://forms.gle/wXScuDqFPMZDrm326)
-- **Framework**: Next.js 14 (App Router) + TypeScript + Tailwind CSS
-- **API Client**: Centralized Axios instance with request/response interceptors
+A high-performance Product Admin Dashboard built with **Next.js (App Router)**, **React**, **Tailwind CSS**, and **Axios**, integrated with the **DummyJSON API**.
 
 ---
 
