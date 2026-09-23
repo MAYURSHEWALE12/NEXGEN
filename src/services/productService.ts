@@ -46,13 +46,19 @@ export const productService = {
     return response.data;
   },
 
+  // In-memory cache for categories to prevent redundant network fetches
+  _cachedCategories: null as CategoryItem[] | null,
+
   /**
    * Fetch all categories
    */
   async getCategories(): Promise<CategoryItem[]> {
+    if (this._cachedCategories && this._cachedCategories.length > 0) {
+      return this._cachedCategories;
+    }
     const response = await apiClient.get<any[]>('/products/categories');
     // DummyJSON v2 returns array of objects [{slug, name, url}], older returned string[]
-    return response.data.map((cat) => {
+    const categories = response.data.map((cat) => {
       if (typeof cat === 'string') {
         return { slug: cat, name: cat.charAt(0).toUpperCase() + cat.slice(1) };
       }
@@ -62,6 +68,8 @@ export const productService = {
         url: cat.url,
       };
     });
+    this._cachedCategories = categories;
+    return categories;
   },
 
   /**

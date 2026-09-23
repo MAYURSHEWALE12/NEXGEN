@@ -62,15 +62,24 @@ export default function ProductDetailPage() {
         const finalData = locallyUpdated[productId]
           ? { ...data, ...locallyUpdated[productId] }
           : data;
+        setError(null);
         setProduct(finalData);
         setSelectedImage(finalData.thumbnail || finalData.images?.[0] || '');
       })
       .catch((err) => {
-        if (err.name === 'CanceledError' || err.code === 'ERR_CANCELED') return;
+        if (
+          err.name === 'CanceledError' ||
+          err.code === 'ERR_CANCELED' ||
+          err.message === 'canceled' ||
+          err.message === 'canceled'
+        ) {
+          return;
+        }
         if (err.status === 404 || err.message?.includes('not found')) {
           setIsNotFound(true);
         } else {
           setError(err.message || 'Failed to load product details.');
+          setProduct(null);
         }
       })
       .finally(() => {
@@ -137,7 +146,7 @@ export default function ProductDetailPage() {
         )}
 
         {/* Content */}
-        {!isLoading && !isNotFound && product && (
+        {!isLoading && !isNotFound && !error && product && (
           <div className="space-y-4">
             {/* Overview Card */}
             <div className="bg-white rounded-lg border border-zinc-200 p-6 shadow-xs grid grid-cols-1 md:grid-cols-12 gap-6">

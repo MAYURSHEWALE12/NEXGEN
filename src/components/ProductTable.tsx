@@ -63,6 +63,8 @@ export function ProductTable({ products, onEdit, onDelete }: ProductTableProps) 
                       <img
                         src={product.thumbnail}
                         alt={product.title}
+                        loading="lazy"
+                        decoding="async"
                         className="w-full h-full object-contain mix-blend-multiply"
                         onError={(e) => {
                           (e.target as HTMLImageElement).src =

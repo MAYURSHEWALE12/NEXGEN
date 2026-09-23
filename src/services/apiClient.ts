@@ -32,6 +32,11 @@ apiClient.interceptors.response.use(
     return response;
   },
   (error: AxiosError<{ message?: string }>) => {
+    // If request was canceled by AbortController, pass through directly
+    if (axios.isCancel(error) || error.name === 'CanceledError' || (error as any).code === 'ERR_CANCELED') {
+      return Promise.reject(error);
+    }
+
     let customErrorMessage = 'An unexpected error occurred. Please try again.';
 
     if (error.response) {
