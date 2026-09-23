@@ -79,18 +79,9 @@ export default function LoginPage() {
             </div>
 
             <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-xs font-medium text-zinc-700">
-                  Password
-                </label>
-                <button
-                  type="button"
-                  onClick={handleFillDemo}
-                  className="text-[11px] text-zinc-500 hover:text-zinc-900 transition-colors underline"
-                >
-                  Use demo (emilyspass)
-                </button>
-              </div>
+              <label className="block text-xs font-medium text-zinc-700 mb-1">
+                Password
+              </label>
               <input
                 type="password"
                 value={password}
@@ -112,10 +103,6 @@ export default function LoginPage() {
             </button>
           </form>
         </div>
-
-        <p className="text-center text-[11px] text-zinc-400">
-          DummyJSON API Authentication Demo
-        </p>
       </div>
     </div>
   );
