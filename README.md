@@ -5,6 +5,7 @@ A high-performance Product Admin Dashboard built for the **Nexgensis Technologie
 ---
 
 ## 🚀 Live Demo & Submission Details
+- **GitHub Repository**: [https://github.com/MAYURSHEWALE12/NEXGEN](https://github.com/MAYURSHEWALE12/NEXGEN)
 - **Submission Form**: [Google Form](https://forms.gle/wXScuDqFPMZDrm326)
 - **Framework**: Next.js 14 (App Router) + TypeScript + Tailwind CSS
 - **API Client**: Centralized Axios instance with request/response interceptors
