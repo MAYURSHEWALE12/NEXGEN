@@ -55,6 +55,23 @@ export default function LoginPage() {
 
         {/* Card */}
         <div className="bg-white p-6 rounded-lg border border-zinc-200 shadow-xs">
+          {/* Test credentials banner for reviewers */}
+          <div className="mb-4 p-2.5 rounded-md bg-zinc-50 border border-zinc-200 text-xs text-zinc-600 flex items-center justify-between">
+            <div>
+              <p className="font-semibold text-zinc-800 text-[11px]">Test Account</p>
+              <p className="font-mono text-[11px] text-zinc-500 mt-0.5">
+                <span className="text-zinc-900 font-medium">emilys</span> / <span className="text-zinc-900 font-medium">emilyspass</span>
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleFillDemo}
+              className="text-[11px] font-medium px-2.5 py-1 rounded bg-white hover:bg-zinc-100 text-zinc-800 border border-zinc-300 shadow-2xs transition-colors"
+            >
+              Auto-fill
+            </button>
+          </div>
+
           {error && (
             <div className="mb-4 p-3 rounded-md bg-red-50 border border-red-200 text-red-700 flex items-start gap-2 text-xs">
               <AlertCircle className="w-4 h-4 text-red-600 shrink-0 mt-0.5" />
